@@ -9,7 +9,7 @@ $handler = new PHPExpress\Handler([
 ]);
 
 $handler->get("/wpis/+:id", function(Request $req, Response $res) {
-    $res->send(["id" => $req->params["id"]]);
+    $res->send(["id" => $req->params["id"], "queryParams" => $req->queryParams]);
 });
 
 $handler->listen();

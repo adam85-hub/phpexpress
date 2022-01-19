@@ -86,7 +86,8 @@ class Handler {
      */
     public function listen() {
         $fullpath = $_SERVER["REQUEST_URI"];
-        $path = str_replace($this->config["PATH_TO_HANDLE"], "", $fullpath);
+        $fullpath = str_replace($this->config["PATH_TO_HANDLE"], "", $fullpath);
+        $path = preg_split("/\?/",  $fullpath)[0];
         $this->handle($path);
     }
 }

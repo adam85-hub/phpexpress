@@ -31,8 +31,7 @@ class Route {
         //Convert path to array
         $this->path_array = \preg_split("/\//", $this->path);
         \array_shift($this->path_array);
-    }    
-    
+    }        
     /**
      * Checks if requested path matches this route path and if it was requested with proper method.
      * @param string $requestPath requested path.

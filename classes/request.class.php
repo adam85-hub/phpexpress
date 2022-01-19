@@ -15,6 +15,7 @@ class Request {
     public $body;
     public $params;
     public $queryParams;
+    public $formData;
 
     /**
      * @param array $path_array Array that contains path splitted by "/".
@@ -23,16 +24,18 @@ class Request {
     {
         $this->headers = apache_request_headers();
         if(file_exists('php://input')) $this->body = file_get_contents("php://input");
-        else $this->body = null;
+        else $this->body = null;   
+        
+        //Get query params and form data
+        $this->queryParams = null;
+        $this->formData = null;
         switch($_SERVER["REQUEST_METHOD"]) {
             case "GET":
                 $this->queryParams = &$_GET;
                 break;
             case "POST":
-                $this->queryParams = &$_POST;
-                break;
-            default: 
-                $this->queryParams = null;
+                $this->formData = &$_POST;
+                break;                
         }   
         
         for($i = 0; $i < count($request_path_array); $i++) {
@@ -43,5 +46,5 @@ class Request {
                 $this->params[substr($template_path_array[$i], 2)] = intval($request_path_array[$i]);
             }
         }
-    }
+    }    
 }
