@@ -1,5 +1,5 @@
 <?php
-namespace PHPExpress;
+namespace PHPExpress\Http;
 
 use Exception;
 use TypeError;

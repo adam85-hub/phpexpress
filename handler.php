@@ -6,6 +6,10 @@ use TypeError;
 
 require_once __DIR__ . "/http/route.class.php";
 
+use PHPExpress\Http\Request;
+use PHPExpress\Http\Response;
+use PHPExpress\Http\Route;
+
 /**
  * Handles requests to server, requires proper ".htaccess" configuration.
  */
