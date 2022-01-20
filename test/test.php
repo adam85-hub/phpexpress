@@ -11,6 +11,15 @@ $handler = new PHPExpress\Handler([
 
 $handler->get("/wpis/+:id", function(Request $req, Response $res) {
     $res->send(["id" => $req->params["id"], "queryParams" => $req->queryParams, "headers" => $req->headers]);
-})->use("json");
+});
+
+$handler->get("/cus/*", function($req, Response $res) {
+    $res->send("It works! <i>tada!</i>");
+});
+
+$handler->get("/*", function(Request $req, Response $res) {
+    $fullpath = $req->fullRequestPath;
+    $res->setError(404, "Requested resource not found!")->send("404 page not found: \"$fullpath\"");
+});
 
 $handler->listen();

@@ -16,6 +16,7 @@ class Request {
     public $params;
     public $queryParams;
     public $formData;
+    public $fullRequestPath;
 
     /**
      * @param array $path_array Array that contains path splitted by "/".
@@ -38,7 +39,7 @@ class Request {
                 break;                
         }   
         
-        for($i = 0; $i < count($request_path_array); $i++) {
+        for($i = 0; $i < count($template_path_array); $i++) {
             if(\strpos($template_path_array[$i], ":") === 0) {
                 $this->params[substr($template_path_array[$i], 1)] = $request_path_array[$i];
             }
@@ -46,5 +47,7 @@ class Request {
                 $this->params[substr($template_path_array[$i], 2)] = intval($request_path_array[$i]);
             }
         }
+
+        $this->fullRequestPath = $_SERVER["REQUEST_URI"];
     }    
 }

@@ -48,23 +48,28 @@ class Route {
         
         $requestPathArray = \preg_split("/\//",$requestPath);
         \array_shift($requestPathArray);
-
         if(count($requestPathArray) == count($this->path_array)) {
             $matched = true;
             for($i = 0; $i < count($requestPathArray); $i++) {
-                if(\strpos($this->path_array[$i], ":") == 0) {
-                    if($requestPathArray[$i] == "") $matched = false;
+                if(\strpos($this->path_array[$i], ":") != false) {
+                    if($requestPathArray[$i] == "") { $matched = false; break; }
                 }
-                else if (\strpos($this->path_array[$i], "+:") == 0){
-                    if(\is_numeric($requestPathArray[$i]) == false) $matched = false;
+                else if (\strpos($this->path_array[$i], "+:") != false){
+                    if(\is_numeric($requestPathArray[$i]) == false) {$matched = false; break;}                 
                 }
-                else {
-                    if($this->path_array[$i] != $requestPathArray[$i]) $matched = false;
+                else if($this->path_array[$i] == "*") {
+                    break;
+                }
+                else if($this->path_array[$i] != $requestPathArray[$i]) {
+                   $matched = false;
+                   break;
                 }
             }
         }
 
-        if($matched && $this->method == $_SERVER['REQUEST_METHOD']) {
+        if($this->path_array[0] == "*") $matched = true; 
+
+        if($matched == true && $this->method == $_SERVER['REQUEST_METHOD']) {
             return true;
         }
 
@@ -75,9 +80,9 @@ class Route {
      * @param mixed $middleware If string it will try to find and apply one of built in middlewares.
      * If it's callable it will call this user defined function.
      * 
-     * @return void
+     * @return Route
      */
-    public function &use($middleware) {
+    public function &use($middleware): Route {
         if(is_string($middleware) == false && is_callable($middleware)) {
             throw new TypeError('$middleware can be only string or callable', 500);
         }
@@ -88,12 +93,14 @@ class Route {
         return $this;
     }
     /**
-     * @param mixed $flags Json flags used to 
+     * Overrides global response flags for this route.
+     * @param mixed $flags Json flags used to send the response.
      * 
-     * @return void
+     * @return Route
      */
-    public function setResponseFlags($flags) {
+    public function &setResponseFlags($flags): Route {
         $this->flags = $flags;
+        return $this;
     }
     /**
      * Executes the callback function with request and response arguments.
