@@ -13,8 +13,13 @@ class Handler {
     private $routes;
     private $config;
     private $middleware;
+    private $globalResponseFlags;
 
     /**
+     * Required in config: 
+     * "PATH_TO_HANDLE" - route where handler listens to requests.
+     * Optional: 
+     * "RESPONSE_FLAGS" - flags defining how json response should be encoded
      * @param array $config configuration for Handler
      */
     function __construct(array $config)
@@ -23,6 +28,8 @@ class Handler {
         if(array_key_exists("PATH_TO_HANDLE", $config) == false) throw new Exception("PATH_TO_HANDLE in handler config is required!", 500);
         $this->config = $config;
         $this->middleware = null;
+        if(array_key_exists("RESPONSE_FLAGS", $config)) $this->globalResponseFlags = $config["RESPONSE_FLAGS"];
+        else $this->globalResponseFlags = null;
     }
     /**
      * Adds handle of specified route get request to Handler. Order of invoking this method matters.
@@ -32,7 +39,7 @@ class Handler {
      * @return Route
      */
     public function &get(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "get");
+        $newRoute = new Route($route, $callback, "get", $this->globalResponseFlags);
         if($this->middleware != null) $newRoute->use($this->middleware);
         array_push($this->routes, $newRoute);
         return $this->routes[count($this->routes) -1];
@@ -45,7 +52,7 @@ class Handler {
      * @return Route
      */
     public function &post(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "post");
+        $newRoute = new Route($route, $callback, "post", $this->globalResponseFlags);
         if($this->middleware != null) $newRoute->use($this->middleware);
         array_push($this->routes, $newRoute);
         return $this->routes[count($this->routes) -1];
@@ -58,7 +65,7 @@ class Handler {
      * @return Route
      */
     public function &delete(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "delete");
+        $newRoute = new Route($route, $callback, "delete", $this->globalResponseFlags);
         if($this->middleware != null) $newRoute->use($this->middleware);
         array_push($this->routes, $newRoute);
         return $this->routes[count($this->routes) -1];
@@ -71,7 +78,7 @@ class Handler {
      * @return Route
      */
     public function &put(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "put");
+        $newRoute = new Route($route, $callback, "put", $this->globalResponseFlags);
         if($this->middleware != null) $newRoute->use($this->middleware);
         array_push($this->routes, $newRoute);
         return $this->routes[count($this->routes) -1];

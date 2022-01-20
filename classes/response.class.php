@@ -7,10 +7,12 @@ namespace PHPExpress;
 class Response {
     private $headers;
     private $body;
+    private $flags;
 
-    function __construct()
+    function __construct($flags = null)
     {
         $this->headers = apache_response_headers();
+        $this->flags = $flags;
     }
 
     public function setHeader(string $header): Response {
@@ -35,7 +37,8 @@ class Response {
             echo $body;
         }
         else if(is_array($body)) {
-            echo json_encode($body);
+            if($this->flags == null) echo json_encode($body);
+            else echo json_encode($body, $this->flags);
         }
     }
 }

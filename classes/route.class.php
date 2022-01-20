@@ -16,13 +16,15 @@ class Route {
     private $handle;
     private string $method;
     private $middleware;
+    private $flags;
 
     /**
      * @param string $path path to route.
      * @param callable $handle function wich get executed when route is requested.
      */
-    function __construct(string $path, callable $handle, string $method)
+    function __construct(string $path, callable $handle, string $method, $flags = null)
     {
+        $this->flags = $flags;
         $this->path = $path;
         $this->handle = $handle;
         $method = \strtoupper($method);
@@ -75,13 +77,23 @@ class Route {
      * 
      * @return void
      */
-    public function use($middleware) {
+    public function &use($middleware) {
         if(is_string($middleware) == false && is_callable($middleware)) {
             throw new TypeError('$middleware can be only string or callable', 500);
         }
         else {
             $this->middleware = $middleware;
         }
+
+        return $this;
+    }
+    /**
+     * @param mixed $flags Json flags used to 
+     * 
+     * @return void
+     */
+    public function setResponseFlags($flags) {
+        $this->flags = $flags;
     }
     /**
      * Executes the callback function with request and response arguments.
@@ -104,7 +116,7 @@ class Route {
             }
         }
 
-        $response = new Response();
+        $response = new Response($this->flags);
         \call_user_func($this->handle, $request, $response);
     }      
 }
