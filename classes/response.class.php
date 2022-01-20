@@ -25,6 +25,11 @@ class Response {
         return $this;
     }
 
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
     public function send($body) {
         if(is_string($body)) {
             echo $body;

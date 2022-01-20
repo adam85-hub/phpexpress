@@ -10,7 +10,7 @@ class Request {
      */
     public $headers;
     /**
-     * @var string|array Body of request.
+     * @var string|array|mixed   Body of request.
      */
     public $body;
     public $params;

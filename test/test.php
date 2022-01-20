@@ -10,6 +10,6 @@ $handler = new PHPExpress\Handler([
 
 $handler->get("/wpis/+:id", function(Request $req, Response $res) {
     $res->send(["id" => $req->params["id"], "queryParams" => $req->queryParams]);
-});
+})->use("json");
 
 $handler->listen();
