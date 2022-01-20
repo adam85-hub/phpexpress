@@ -1,5 +1,5 @@
 <?php
-require_once "../handler.php";
+require_once dirname(__DIR__, 1) . "/handler.php";
 
 use PHPExpress\Request;
 use PHPExpress\Response;
@@ -10,10 +10,10 @@ $handler = new PHPExpress\Handler([
 ]);
 
 $handler->get("/wpis/+:id", function(Request $req, Response $res) {
-    $res->send(["id" => $req->params["id"], "queryParams" => $req->queryParams, "headers" => $req->headers]);
+    $res->send(["id" => $req->params["id"]]);
 });
 
-$handler->get("/cus/*", function($req, Response $res) {
+$handler->get("/cus/*", function($none, Response $res) {
     $res->send("It works! <i>tada!</i>");
 });
 

@@ -4,7 +4,7 @@ namespace PHPExpress;
 use Exception;
 use TypeError;
 
-require_once __DIR__ . "/classes/route.class.php";
+require_once __DIR__ . "/http/route.class.php";
 
 /**
  * Handles requests to server, requires proper ".htaccess" configuration.
