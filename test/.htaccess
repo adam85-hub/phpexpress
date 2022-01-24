@@ -1,2 +1,2 @@
 RewriteEngine On
-RewriteRule ^([a-zA-z0-9]) test.php
+RewriteRule ^([a-zA-z0-9]) main.php

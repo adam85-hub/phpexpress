@@ -1,8 +1,8 @@
 <?php
 require_once dirname(__DIR__, 1) . "/handler.php";
 
-use PHPExpress\Request;
-use PHPExpress\Response;
+use PHPExpress\Http\Request;
+use PHPExpress\Http\Response;
 
 $handler = new PHPExpress\Handler([
     "PATH_TO_HANDLE" => "/phpexpress/test",

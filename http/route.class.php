@@ -122,8 +122,9 @@ class Route {
                 else throw new Exception("That middleware does not exist", 500);
             }
         }
-
         $response = new Response($this->flags);
+
+        //Calls method associated with this Route
         \call_user_func($this->handle, $request, $response);
     }      
 }
