@@ -1,12 +1,12 @@
 <?php
-require_once dirname(__DIR__, 1) . "/handler.php";
+require_once dirname(__DIR__, 1) . "/phpexpress.php"; // Path to phpexpress.php
 
 use PHPExpress\Http\Request;
 use PHPExpress\Http\Response;
 
-$handler = new PHPExpress\Handler([
-    "PATH_TO_HANDLE" => "/phpexpress/test",
-    "RESPONSE_FLAGS" => JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+$handler = new PHPExpress\Http\Handler([
+    "PATH_TO_HANDLE" => "/phpexpress/setup", //Access path to folder containing this file
+    "RESPONSE_FLAGS" => JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES //Flags describing how responses will be encoded to json
 ]);
 
 $handler->get("/wpis/+:id", function(Request $req, Response $res) {
