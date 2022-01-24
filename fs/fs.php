@@ -29,7 +29,6 @@ class File {
             }
         }
     }
-
     /**
      * Writes data to file.
      * @param mixed $mixin Data that will be written to the file
@@ -39,7 +38,6 @@ class File {
     public function WriteAll($mixin) {
         file_put_contents($this->path, $mixin);
     }
-
     /**
      * Reads all contents of file as string
      * 
@@ -48,7 +46,6 @@ class File {
     public function ReadAllText(): string {
         return file_get_contents($this->path);
     }
-
     /**
      * Reads all contents of file as json
      * 
