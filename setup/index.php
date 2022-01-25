@@ -17,6 +17,10 @@ $handler->get("/post/+:id", function(Request $req, Response $res) { //Route with
     $res->send(["id" => $req->params["id"]]);
 });
 
+$handler->post("/test", function(Request $req, Response $res) { //Middleware example
+    $res->send($req->body);
+})->use("json");
+
 $handler->get("/*", function(Request $req, Response $res) { //Matches all paths
     $fullpath = $req->fullRequestPath;
     $res->setError(404, "Requested resource not found!")->send("404 page not found: \"$fullpath\"");

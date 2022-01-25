@@ -115,7 +115,7 @@ class Route {
         //Call middleware function
         if($this->middleware != null) {
             if(is_string($this->middleware)) {                
-                $functionPath = 'PHPExpress\\' . $this->middleware;
+                $functionPath = 'PHPExpress\\Http\\' . $this->middleware;
                 if(function_exists($functionPath)) {
                     $request = \call_user_func($functionPath, $request);
                 }

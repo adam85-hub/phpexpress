@@ -24,8 +24,7 @@ class Request {
     function __construct(array $template_path_array, array $request_path_array)
     {
         $this->headers = apache_request_headers();
-        if(file_exists('php://input')) $this->body = file_get_contents("php://input");
-        else $this->body = null;   
+        $this->body = file_get_contents("php://input");
         
         //Get query params and form data
         $this->queryParams = null;
