@@ -13,20 +13,25 @@ require_once __DIR__ . "/response.class.php";
 class Route {
     private string $path;
     private array $path_array;
-    private $handle;
+    private callable $handle;
     private string $method;
     private $middleware;
     private $flags;
+    private callable $prefilght_handle;
 
     /**
      * @param string $path path to route.
      * @param callable $handle function wich get executed when route is requested.
+     * @param string $method request method.
+     * @param callable $default_handle defautl handle wich get executed when route is requested in preflight mode.
+     * @param null $flags Json flags used to send response.
      */
-    function __construct(string $path, callable $handle, string $method, $flags = null)
+    function __construct(string $path, callable $handle, string $method, callable $default_handle, $flags = null)
     {
         $this->flags = $flags;
         $this->path = $path;
         $this->handle = $handle;
+        $this->prefilght_handle = $default_handle;
         $method = \strtoupper($method);
         if($method != 'GET' && $method != 'POST' && $method != 'PUT' && $method != 'DELETE') {
             throw new Exception("Invalid request method type", 400);
@@ -103,6 +108,16 @@ class Route {
         return $this;
     }
     /**
+     * Adds custom handle to handle preflight requests.
+     * @param callable $handle Function that handles preflight requests.
+     * 
+     * @return Route
+     */
+    public function &setPreflightHandle(callable $handle) {
+        $this->prefilght_handle = $handle;
+        return $this;
+    }
+    /**
      * Executes the callback function with request and response arguments.
      * @return void
      */
@@ -126,7 +141,14 @@ class Route {
 
         //Calls method associated with this Route
         \call_user_func($this->handle, $request, $response);
-    }      
+    }  
+    /**
+     * Executes preflight function (default preflight function if not set)
+     * @return void
+     */
+    public function invoke_preflight() {
+        \call_user_func($this->prefilght_handle);
+    }  
 }
 
 //* Middlewares:
