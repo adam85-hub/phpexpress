@@ -13,11 +13,11 @@ require_once __DIR__ . "/response.class.php";
 class Route {
     private string $path;
     private array $path_array;
-    private callable $handle;
+    private $handle;
     private string $method;
     private $middleware;
     private $flags;
-    private callable $prefilght_handle;
+    private $prefilght_handle;
 
     /**
      * @param string $path path to route.
@@ -26,12 +26,12 @@ class Route {
      * @param callable $default_handle defautl handle wich get executed when route is requested in preflight mode.
      * @param null $flags Json flags used to send response.
      */
-    function __construct(string $path, callable $handle, string $method, callable $default_handle, $flags = null)
+    function __construct(string $path, callable $handle, string $method, callable $prefilght_handle, $flags = null)
     {
         $this->flags = $flags;
         $this->path = $path;
         $this->handle = $handle;
-        $this->prefilght_handle = $default_handle;
+        $this->prefilght_handle = $prefilght_handle;
         $method = \strtoupper($method);
         if($method != 'GET' && $method != 'POST' && $method != 'PUT' && $method != 'DELETE') {
             throw new Exception("Invalid request method type", 400);
@@ -74,7 +74,7 @@ class Route {
 
         if($this->path_array[0] == "*") $matched = true; 
 
-        if($matched == true && $this->method == $_SERVER['REQUEST_METHOD']) {
+        if($matched == true && ($this->method == $_SERVER['REQUEST_METHOD'] || $_SERVER['REQUEST_METHOD'] == "OPTIONS")) {
             return true;
         }
 
@@ -108,12 +108,12 @@ class Route {
         return $this;
     }
     /**
-     * Adds custom handle to handle preflight requests.
+     * Adds preflight reuqest handler for single Route.
      * @param callable $handle Function that handles preflight requests.
      * 
      * @return Route
      */
-    public function &setPreflightHandle(callable $handle) {
+    public function &preflight(callable $handle) {
         $this->prefilght_handle = $handle;
         return $this;
     }

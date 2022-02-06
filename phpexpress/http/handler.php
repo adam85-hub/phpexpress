@@ -14,7 +14,7 @@ class Handler {
     private $config;
     private $middleware;
     private $globalResponseFlags;
-    private $default_handle;
+    private $prefilght_handle;
 
     /**
      * Required in config: 
@@ -29,9 +29,9 @@ class Handler {
         if(array_key_exists("PATH_TO_HANDLE", $config) == false) throw new Exception("PATH_TO_HANDLE in handler config is required!", 500);
         $this->config = $config;
         $this->middleware = null;
+        $this->prefilght_handle = function() { };
         if(array_key_exists("RESPONSE_FLAGS", $config)) $this->globalResponseFlags = $config["RESPONSE_FLAGS"];
         else $this->globalResponseFlags = null;
-        $this->default_handle = function() {};
     }
     /**
      * Adds handle of specified route get request to Handler. Order of invoking this method matters.
@@ -41,9 +41,7 @@ class Handler {
      * @return Route
      */
     public function &get(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "get", $this->default_handle, $this->globalResponseFlags);
-        if($this->middleware != null) $newRoute->use($this->middleware);
-        array_push($this->routes, $newRoute);
+        $this->addRoute($route, $callback, "get");
         return $this->routes[count($this->routes) -1];
     }    
     /**
@@ -54,9 +52,7 @@ class Handler {
      * @return Route
      */
     public function &post(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "post", $this->default_handle, $this->globalResponseFlags);
-        if($this->middleware != null) $newRoute->use($this->middleware);
-        array_push($this->routes, $newRoute);
+        $this->addRoute($route, $callback, "post");
         return $this->routes[count($this->routes) -1];
     }  
     /**
@@ -67,9 +63,7 @@ class Handler {
      * @return Route
      */
     public function &delete(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "delete", $this->default_handle, $this->globalResponseFlags);
-        if($this->middleware != null) $newRoute->use($this->middleware);
-        array_push($this->routes, $newRoute);
+        $this->addRoute($route, $callback, "delete");
         return $this->routes[count($this->routes) -1];
     }
     /**
@@ -80,9 +74,7 @@ class Handler {
      * @return Route
      */
     public function &put(string $route, callable $callback): Route {
-        $newRoute = new Route($route, $callback, "put", $this->default_handle, $this->globalResponseFlags);
-        if($this->middleware != null) $newRoute->use($this->middleware);
-        array_push($this->routes, $newRoute);
+        $this->addRoute($route, $callback, "put");
         return $this->routes[count($this->routes) -1];
     }
     /**
@@ -92,7 +84,9 @@ class Handler {
      * @return void
      */
     private function addRoute(string $route, callable $callback, string $method): void {
-        
+        $newRoute = new Route($route, $callback, $method, $this->prefilght_handle, $this->globalResponseFlags);
+        if($this->middleware != null) $newRoute->use($this->middleware);
+        array_push($this->routes, $newRoute);
     }
     /**
      * Sets given middleware globally(for all routes). 
@@ -108,6 +102,16 @@ class Handler {
         else $this->middleware = $middleware;
     }
     /**
+     * Sets given preflight handle globally(for all routes).
+     * Works simmilar to Handler::use() function. Only diffrence is that it sets handling of preflight requests instead of applying middleware.
+     * @param callable $preflight
+     * @return void
+     */
+    public function preflight(callable $preflight) {
+        if(is_callable($preflight) == false) throw new TypeError('$preflight must be callable');
+        else $this->prefilght_handle = $preflight;
+    }
+    /**
      * Handles requested route.
      * @param string $requestedRoute - requested route.
      * 
@@ -116,7 +120,7 @@ class Handler {
     public function handle(string $requestedRoute) {        
         foreach($this->routes as $route) {
             if($route->isRoutePath($requestedRoute)) {
-                if($_SERVER['REQUEST_METHOD'] != 'OPTIONS') {
+                if($_SERVER['REQUEST_METHOD'] != 'OPTIONS') { // Checks if it is preflight request
                     $route->invoke($requestedRoute);
                     return;
                 }
