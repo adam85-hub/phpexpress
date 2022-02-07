@@ -17,12 +17,24 @@ $handler->get("/post/+:id", function(Request $req, Response $res) { //Route with
     $res->send(["id" => $req->params["id"]]);
 });
 
+$handler->get("/auth", function(Request $req, Response $res) { //Route with custom preflight request handler
+    $password = $req->headers["Password"];
+    if($password == "butter") {
+        $res->send("Ye it is!");
+        return;
+    }
+
+    $res->send("No it isn't");
+})->preflight(function() {
+    header("Access-Control-Allow-Headers: Password");
+});
+
 $handler->get("/*", function(Request $req, Response $res) { //Matches all paths
     $fullpath = $req->fullRequestPath;
     $res->setError(404, "Requested resource not found!")->send("404 page not found: \"$fullpath\"");
 });
 
-$handler->post("/test", function(Request $req, Response $res) { // Built in middleware example
+$handler->post("/test", function(Request $req, Response $res) { //Route with build in middleware
     $res->send($req->body);
 })->use("json");
 
