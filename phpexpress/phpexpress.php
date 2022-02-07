@@ -1,6 +1,7 @@
 <?php
 /**
  * @author Adam Bialik <adam.bialik85@gmail.com>
+ * @version 1.1
  */
 
 namespace PHPExpress;
