@@ -53,6 +53,6 @@ class File {
      */
     public function ReadAllJson(): array {
         $jsonString = file_get_contents($this->path);
-        return json_decode($jsonString);
+        return json_decode($jsonString, true);
     }
 }
